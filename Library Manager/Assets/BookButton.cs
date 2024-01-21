@@ -1,14 +1,13 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class ButtonManager : MonoBehaviour
+
+public class BookButton : MonoBehaviour
 {
-    public class BookButton : MonoBehaviour
-    {
+   
         public TextMeshProUGUI titleText;
         public TextMeshProUGUI authorText;
         public TextMeshProUGUI statusText; // Ödünç alındı durumu için
@@ -51,5 +50,5 @@ public class ButtonManager : MonoBehaviour
             // Ödünç alındı durumunu güncelle
             statusText.text = associatedBook.IsBorrowed ? "Borrowed" : "Available";
         }
-    }
+    
 }

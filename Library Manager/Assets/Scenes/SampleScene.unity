@@ -528,11 +528,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 871182077}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81fb5b435de3a490f82ca3f67cd12a21, type: 3}
+  m_Script: {fileID: 11500000, guid: c13c59dd06c5e4bd5a4312f3bd8bab83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BookPrefab: {fileID: 3104266338874535308, guid: 744dd8cdd03504d059b3a8b61b974a5d, type: 3}
   ContantArea: {fileID: 871182078}
+  bookButtonPrefab: {fileID: 0}
 --- !u!1 &1113428918
 GameObject:
   m_ObjectHideFlags: 0

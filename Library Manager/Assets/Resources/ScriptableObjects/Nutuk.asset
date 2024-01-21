@@ -16,6 +16,11 @@ MonoBehaviour:
   Author: "Mustafa Kemal Atat\xFCrk"
   ISBN: 0
   TotalCopies: 1
-  BorrowedCopies: 0
-  index: 0
-  "veriaktar\u0131ld\u0131": 1
+  BorrowedCopies: 1
+  "veriaktar\u0131ld\u0131": 0
+  OnBorrow:
+    m_PersistentCalls:
+      m_Calls: []
+  OnReturn:
+    m_PersistentCalls:
+      m_Calls: []
