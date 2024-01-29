@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using System;
 
-[CreateAssetMenu(fileName = "New Book", menuName = "Library/Book")]
+[CreateAssetMenu(fileName = "New Book", menuName = "Book")]
 public class Book : ScriptableObject
 {
     public string Title;
@@ -12,49 +13,91 @@ public class Book : ScriptableObject
     public int ISBN;
     public int TotalCopies;
     public int BorrowedCopies;
-    
+    public GameObject KitapContainer;
+    public GameObject TeslimZamanıObj;
     public bool veriaktarıldı = false;
-
-
-    public UnityEvent OnBorrow;
-    public UnityEvent OnReturn;
-
+    public bool OduncAlındı = false;
+    public DateTime borrowTime = DateTime.Now;
+    
+    
     public void BorrowBook()
     {
-        if (BorrowedCopies < TotalCopies)
+        if (BorrowedCopies < TotalCopies&&OduncAlındı==false)
         {
             BorrowedCopies++;
-            Debug.Log($"Book {Title} borrowed successfully. Remaining copies: {TotalCopies - BorrowedCopies}");
-
-            // OnBorrow olayını tetikle
-            OnBorrow.Invoke();
+            TotalCopies--;
+           
+            OduncAlındı = true;
+            borrowTime = DateTime.Now;
+            Debug.Log(borrowTime.ToString());
+            
         }
         else
         {
-            Debug.Log("No available copies for borrowing.");
+            Debug.Log("Bu kitaptan zaten elinde var ");
         }
     }
 
-    public bool IsBorrowed
+    public bool ZamanAsımıOldu()
     {
-        get { return BorrowedCopies > 0; }
+        DateTime teslim = DateTime.Now;
+        DateTime oduncalma = borrowTime.AddDays(7);
+        int olc = DateTime.Compare(teslim, oduncalma);
+        if (olc < 0)
+        {
+            return false;
+        }
+        return true;
     }
+
+    public string KalanZamanDondur()
+    {
+        if (OduncAlındı)
+        {
+            DateTime k = borrowTime.AddDays(7);
+            return k.ToString();
+        }
+        return null;
+    }
+
+   
 
     public void ReturnBook()
     {
         if (BorrowedCopies > 0)
         {
-            BorrowedCopies--;
-            Debug.Log($"Book {Title} returned successfully. Remaining copies: {TotalCopies - BorrowedCopies}");
+            DateTime teslim = DateTime.Now;
+            DateTime oduncalma = borrowTime.AddDays(7);
+            int olc = DateTime.Compare(teslim, oduncalma);
+            if (olc<0)
+            {
+               
+                BorrowedCopies--;
+                TotalCopies++;
+                Debug.Log($"Book {Title} returned successfully. Remaining copies: {TotalCopies - BorrowedCopies}");
+                OduncAlındı = false;
+                Debug.Log(oduncalma);
+                Debug.Log(olc);
+                Debug.Log(teslim);
 
-            // OnReturn olayını tetikle
-            OnReturn.Invoke();
+            }
+            else
+            {
+                Debug.Log("ZAMAN AŞIMI!!");
+                Debug.Log(borrowTime);
+                Debug.Log(olc);
+                Debug.Log(oduncalma);
+                Debug.Log(teslim);
+            }
+
         }
         else
         {
             Debug.Log("No borrowed copies to return.");
         }
     }
+
+
     public static class DataBase
     {
         static List<Book> Books = null;
@@ -65,11 +108,7 @@ public class Book : ScriptableObject
             return Books;
         }
 
-        public static Book SearchBook(string keyword)
-            => GetBooks().Find(item =>
-            item.Title == keyword ||
-            item.Author==keyword);
-      
+       
     }
 
 

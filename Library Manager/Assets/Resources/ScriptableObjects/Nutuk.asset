@@ -14,13 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: NUTUK
   Author: "Mustafa Kemal Atat\xFCrk"
-  ISBN: 0
+  ISBN: 1515
   TotalCopies: 1
-  BorrowedCopies: 1
-  "veriaktar\u0131ld\u0131": 0
-  OnBorrow:
-    m_PersistentCalls:
-      m_Calls: []
-  OnReturn:
-    m_PersistentCalls:
-      m_Calls: []
+  BorrowedCopies: 0
+  KitapContainer: {fileID: 0}
+  "TeslimZaman\u0131Obj": {fileID: 0}
+  "veriaktar\u0131ld\u0131": 1
+  "OduncAl\u0131nd\u0131": 0

@@ -3,94 +3,165 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Linq;
-using UnityEngine.Events;
+
+
 
 public class LibraryManager : MonoBehaviour
 {
     public GameObject BookPrefab;
     public RectTransform ContantArea;
-    List<Book> Books;
-    
+    [SerializeField]List<Book> Books;
+    public GameObject HataMesaji;
+    public TMP_InputField ara;
+    public static LibraryManager instance;
+    public GameObject TümKitaplarText;
+    public GameObject OduncKitaplarText;
 
-
-    private void Start()
+    private void Awake()
     {
-        CreateBook();
-        
+        instance = this;
+        veriSıfırla();
     }
-    public void CreateBook()
+
+    void veriSıfırla()
     {
         Books = Book.DataBase.GetBooks();
-
-        for (int i = 0; i < Books.Count; i++)
+        foreach (var book in Books)
         {
-            GameObject temp = Instantiate(BookPrefab, ContantArea.position, Quaternion.identity);
+            book.veriaktarıldı = false;
+        }
+    }
+    private void Start()
+    {
+        //CreateBook();
+        Guncelle();
 
 
-            temp.GetComponent<RectTransform>().SetParent(ContantArea, false);
-            for (int y = 0; y < Books.Count; y++)
+    }
+    public void TumunuGetir()
+    {
+        Books = Book.DataBase.GetBooks();
+        TümKitaplarText.SetActive(true);
+        OduncKitaplarText.SetActive(false);
+        List<GameObject> OduncAlınmayanlar = new List<GameObject>();
+
+        foreach (var book in Books)
+        {
+
+            OduncAlınmayanlar.Add(book.KitapContainer);
+            Debug.Log(book.name);
+            ShowFilteredBooks(OduncAlınmayanlar);
+
+        }
+    }
+    public void OduncAlınanlarıGetır()
+    {
+        Books = Book.DataBase.GetBooks();
+        TümKitaplarText.SetActive(false);
+        OduncKitaplarText.SetActive(true);
+        List<GameObject> OduncAlınmayanlar = new List<GameObject>();
+       
+        foreach (var book in Books)
+        {
+          
+            if (book.OduncAlındı != true)
             {
-                temp.GetComponent<ContentScript>().VeriAl(Books[i]);
+
+                OduncAlınmayanlar.Add(book.KitapContainer);
+                Debug.Log(book.name);
+                HideFilteredBooks(OduncAlınmayanlar);
+
+            }
+           
+        }
+    }
+
+    public void Guncelle()
+    {
+        Books= Book.DataBase.GetBooks();
+
+        foreach (var book in Books)
+        {
+            if (book.veriaktarıldı==false)
+            {
+                GameObject temp = Instantiate(BookPrefab, ContantArea.position, Quaternion.identity);
+                temp.GetComponent<RectTransform>().SetParent(ContantArea, false);
+                temp.GetComponent<ContentScript>().VeriAl(book);
+            }
+            else
+            {
+                Debug.Log(book.name);
                 
             }
+            
 
         }
-
     }
 
-
-    void BorrowBook(int isbn)
+    public void Kitapekle(Book book)
     {
-        Book book = FindBookByISBN(isbn);
-        if (book != null)
-        {
-            book.BorrowBook();
-        }
-        else
-        {
-            Debug.LogError("Book not found.");
-        }
+        Books.Add(book);
+        Guncelle();
     }
+   
 
-    void ReturnBook(int isbn)
+    public void SearchBooks(string searchText)
+   {
+        List<Book> tümKitaplar = Book.DataBase.GetBooks();
+        List<GameObject> containerObjler = new List<GameObject>();
+        foreach (Book book in tümKitaplar)
+        {
+
+            if (!book.Title.ToLower().Contains(searchText.ToLower())&&!book.Author.ToLower().Contains(searchText.ToLower()))
+            {
+                containerObjler.Add(book.KitapContainer);
+                HideFilteredBooks(containerObjler);
+               
+            }
+            else
+            {
+                book.KitapContainer.SetActive(true);
+               
+            }
+
+            
+        }
+       
+        
+   }
+
+    public void KitaplarıAc()
     {
-        Book book = FindBookByISBN(isbn);
-        if (book != null)
+        List<Book> tümKitaplar = Book.DataBase.GetBooks();
+        List<GameObject> containerObjler = new List<GameObject>();
+
+        foreach (var book in tümKitaplar)
         {
-            book.ReturnBook();
+            containerObjler.Add(book.KitapContainer);
+
+            foreach (var container in containerObjler)
+            {
+                container.SetActive(true);
+            }
         }
-        else
+    }
+
+    public void HideFilteredBooks(List<GameObject> filteredBooks)
+    {
+        // Sonuçları ekrana yazdır veya başka bir işlem yap
+        foreach (var book in filteredBooks)
         {
-            Debug.LogError("Book not found.");
+            book.SetActive(false);
         }
     }
 
-    Book FindBookByISBN(int isbn)
+    public void ShowFilteredBooks(List<GameObject> filteredBooks)
     {
-        return Books.Find(b => b.ISBN == isbn);
+        // Sonuçları ekrana yazdır veya başka bir işlem yap
+        foreach (var book in filteredBooks)
+        {
+            book.SetActive(true);
+        }
     }
-
-    Book CreateBook(string title, string author, int isbn, int totalCopies)
-    {
-        // ScriptableObject'den bir instance oluştur
-        Book newBook = ScriptableObject.CreateInstance<Book>();
-
-        // Kitap özelliklerini ayarla
-        newBook.Title = title;
-        newBook.Author = author;
-        newBook.ISBN = isbn;
-        newBook.TotalCopies = totalCopies;
-        newBook.BorrowedCopies = 0;
-
-        // UnityEvent'leri başlat
-        newBook.OnBorrow = new UnityEvent();
-        newBook.OnReturn = new UnityEvent();
-
-        return newBook;
-    }
-
-
-
 
 }
