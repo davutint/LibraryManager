@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: NUTUK
   Author: "Mustafa Kemal Atat\xFCrk"
-  ISBN: 1515
+  ISBN: 2147483647
   TotalCopies: 1
   BorrowedCopies: 0
   KitapContainer: {fileID: 0}
